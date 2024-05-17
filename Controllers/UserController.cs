@@ -48,7 +48,48 @@ namespace CompanyUsersAPI.Controllers
             User user = _dapper.LoadDataSingle<User>(sql);
             return user;
         }
+
+        [HttpPut("EditUser")]
+        public IActionResult EditUser(User user)
+        {
+            string sql = @"UPDATE TutorialAppSchema.Users
+                            SET [FirstName] = '" + user.FirstName +
+                            "',[LastName] = '" + user.LastName +
+                            "', [Email] = '" + user.Email +
+                            "', [Gender] = '" + user.Gender +
+                            "', [Active] = '" + user.Active +
+                           "' WHERE UserId =  " + user.UserId;
+            if (_dapper.ExecuteSql(sql))
+            {
+                return Ok();
+            }
+
+            throw new Exception("Failed to update User");
+        }
+
+        [HttpPost("AddUser")]
+        public IActionResult AddUser(User user)
+        {
+            string sql = @"INSERT INTO TutorialAppSchema.Users(
+                            [FirstName],
+                            [LastName],
+                            [Email],
+                            [Gender],
+                            [Active]
+                            ) VALUES (" +
+                            "'" + user.FirstName +
+                            "', '" + user.LastName +
+                            "', '" + user.Email +
+                            "', '" + user.Gender +
+                            "', '" + user.Active +
+                            "')";
+            Console.WriteLine(sql);
+            if (_dapper.ExecuteSql(sql))
+            {
+                return Ok();
+            }
+
+            throw new Exception("Failed to add User");
+        }
     }
-
-
 }

@@ -25,7 +25,7 @@ namespace CompanyUsersAPI
             return dbConnection.QuerySingle<T>(sql);
         }
 
-        public bool EcexuteSql(string sql)
+        public bool ExecuteSql(string sql)
         {
             IDbConnection dbConnection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             return dbConnection.Execute(sql) > 0;
