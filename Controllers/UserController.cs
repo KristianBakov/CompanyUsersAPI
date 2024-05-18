@@ -1,3 +1,4 @@
+using CompanyUsersAPI.Data;
 using CompanyUsersAPI.Dtos;
 using CompanyUsersAPI.Models;
 using Microsoft.AspNetCore.Mvc;
