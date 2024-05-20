@@ -1,3 +1,4 @@
+using AutoMapper;
 using CompanyUsersAPI.Data;
 using CompanyUsersAPI.Dtos;
 using CompanyUsersAPI.Models;
@@ -10,9 +11,14 @@ namespace CompanyUsersAPI.Controllers
     public class UserEFController : ControllerBase
     {
         DataContextEF _entityFramework;
+        IMapper _mapper;
         public UserEFController(IConfiguration config)
         {
             _entityFramework = new DataContextEF(config);
+            _mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<UserDto, User>();
+            }));
         }
 
 
@@ -67,14 +73,7 @@ namespace CompanyUsersAPI.Controllers
                 return Conflict("A user with the same email already exists.");
             }
 
-            User userDb = new()
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Gender = user.Gender,
-                Active = user.Active
-            };
+            User userDb = _mapper.Map<User>(user);
 
             _entityFramework.Users.Add(userDb);
             if (_entityFramework.SaveChanges() > 0)
