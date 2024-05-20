@@ -1,6 +1,6 @@
 namespace CompanyUsersAPI.Data
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         DataContextEF _entityFramework;
         public UserRepository(IConfiguration config)

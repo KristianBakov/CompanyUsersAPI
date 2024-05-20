@@ -11,10 +11,12 @@ namespace CompanyUsersAPI.Controllers
     public class UserEFController : ControllerBase
     {
         DataContextEF _entityFramework;
+        IUserRepository _userRepository;
         IMapper _mapper;
-        public UserEFController(IConfiguration config)
+        public UserEFController(IConfiguration config, IUserRepository userRepository)
         {
             _entityFramework = new DataContextEF(config);
+            _userRepository = userRepository;
             _mapper = new Mapper(new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<UserDto, User>();
@@ -53,7 +55,7 @@ namespace CompanyUsersAPI.Controllers
                 userDb.Email = user.Email;
                 userDb.Gender = user.Gender;
                 userDb.Active = user.Active;
-                if (_entityFramework.SaveChanges() > 0)
+                if (_userRepository.SaveChanges())
                 {
                     return Ok();
                 }
@@ -75,8 +77,8 @@ namespace CompanyUsersAPI.Controllers
 
             User userDb = _mapper.Map<User>(user);
 
-            _entityFramework.Users.Add(userDb);
-            if (_entityFramework.SaveChanges() > 0)
+            _userRepository.AddEntity<User>(userDb);
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
@@ -93,8 +95,8 @@ namespace CompanyUsersAPI.Controllers
             .FirstOrDefault();
             if (userDb != null)
             {
-                _entityFramework.Users.Remove(userDb);
-                if (_entityFramework.SaveChanges() > 0)
+                _userRepository.RemoveEntity(userDb);
+                if (_userRepository.SaveChanges())
                 {
                     return Ok();
                 }
@@ -129,7 +131,7 @@ namespace CompanyUsersAPI.Controllers
                 userDb.JobTitle = userJobInfo.JobTitle;
                 userDb.Department = userJobInfo.Department;
 
-                if (_entityFramework.SaveChanges() > 0)
+                if (_userRepository.SaveChanges())
                 {
                     return Ok();
                 }
@@ -143,8 +145,8 @@ namespace CompanyUsersAPI.Controllers
         [HttpPost("AddUserJobInfo")]
         public IActionResult AddUserJobInfo(UserJobInfo userJobInfo)
         {
-            _entityFramework.UserJobInfo.Add(userJobInfo);
-            if (_entityFramework.SaveChanges() > 0)
+            _userRepository.AddEntity(userJobInfo);
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
@@ -161,8 +163,8 @@ namespace CompanyUsersAPI.Controllers
 
             if (userJobInfo != null)
             {
-                _entityFramework.UserJobInfo.Remove(userJobInfo);
-                if (_entityFramework.SaveChanges() > 0)
+                _userRepository.RemoveEntity(userJobInfo);
+                if (_userRepository.SaveChanges())
                 {
                     return Ok();
                 }
@@ -196,7 +198,7 @@ namespace CompanyUsersAPI.Controllers
             {
                 userDb.Salary = userSalary.Salary;
 
-                if (_entityFramework.SaveChanges() > 0)
+                if (_userRepository.SaveChanges())
                 {
                     return Ok();
                 }
@@ -210,8 +212,8 @@ namespace CompanyUsersAPI.Controllers
         [HttpPost("AddUserSalary")]
         public IActionResult AddUserSalary(UserSalary userSalary)
         {
-            _entityFramework.UserSalary.Add(userSalary);
-            if (_entityFramework.SaveChanges() > 0)
+            _userRepository.AddEntity(userSalary);
+            if (_userRepository.SaveChanges())
             {
                 return Ok();
             }
@@ -228,8 +230,8 @@ namespace CompanyUsersAPI.Controllers
 
             if (userSalary != null)
             {
-                _entityFramework.UserSalary.Remove(userSalary);
-                if (_entityFramework.SaveChanges() > 0)
+                _userRepository.RemoveEntity(userSalary);
+                if (_userRepository.SaveChanges())
                 {
                     return Ok();
                 }
