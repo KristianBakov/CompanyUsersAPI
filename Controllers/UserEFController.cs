@@ -10,12 +10,10 @@ namespace CompanyUsersAPI.Controllers
     [Route("[controller]")]
     public class UserEFController : ControllerBase
     {
-        DataContextEF _entityFramework;
         IUserRepository _userRepository;
         IMapper _mapper;
         public UserEFController(IConfiguration config, IUserRepository userRepository)
         {
-            _entityFramework = new DataContextEF(config);
             _userRepository = userRepository;
             _mapper = new Mapper(new MapperConfiguration(cfg =>
             {
@@ -27,27 +25,19 @@ namespace CompanyUsersAPI.Controllers
         [HttpGet("GetUsers/")]
         public IEnumerable<User> GetUsers()
         {
-            IEnumerable<User> users = _entityFramework.Users.ToList();
-            return users;
+            return _userRepository.GetUsers();
         }
 
         [HttpGet("GetSingleUser/{userId}")]
         public User GetSingleUser(int userId)
         {
-            User? user = _entityFramework.Users
-            .Where(u => u.UserId == userId)
-            .FirstOrDefault();
-            if (user != null) return user;
-
-            throw new Exception("Failed to get User " + userId);
+            return _userRepository.GetSingleUser(userId);
         }
 
         [HttpPut("EditUser")]
         public IActionResult EditUser(User user)
         {
-            User? userDb = _entityFramework.Users
-            .Where(u => u.UserId == user.UserId)
-            .FirstOrDefault();
+            User? userDb = _userRepository.GetSingleUser(user.UserId);
             if (userDb != null)
             {
                 userDb.FirstName = user.FirstName;
@@ -69,12 +59,6 @@ namespace CompanyUsersAPI.Controllers
         [HttpPost("AddUser")]
         public IActionResult AddUser(UserDto user)
         {
-            var existingUser = _entityFramework.Users.FirstOrDefault(u => u.Email == user.Email);
-            if (existingUser != null)
-            {
-                return Conflict("A user with the same email already exists.");
-            }
-
             User userDb = _mapper.Map<User>(user);
 
             _userRepository.AddEntity<User>(userDb);
@@ -90,9 +74,7 @@ namespace CompanyUsersAPI.Controllers
         [HttpDelete("DeleteUser/{userId}")]
         public IActionResult DeleteUser(int userId)
         {
-            User? userDb = _entityFramework.Users
-            .Where(u => u.UserId == userId)
-            .FirstOrDefault();
+            User? userDb = _userRepository.GetSingleUser(userId);
             if (userDb != null)
             {
                 _userRepository.RemoveEntity(userDb);
@@ -100,7 +82,6 @@ namespace CompanyUsersAPI.Controllers
                 {
                     return Ok();
                 }
-
 
                 throw new Exception("Failed to delete user " + userId);
             }
@@ -112,9 +93,7 @@ namespace CompanyUsersAPI.Controllers
         [HttpGet("GetUserJobInfo/{userId}")]
         public UserJobInfo GetUserJobInfo(int userId)
         {
-            UserJobInfo? userJobInfo = _entityFramework.UserJobInfo
-            .Where(u => u.UserId == userId)
-            .FirstOrDefault();
+            UserJobInfo? userJobInfo = _userRepository.GetSingleUserJobInfo(userId);
 
             if (userJobInfo != null) return userJobInfo;
             throw new Exception("Failed to get User Job Info " + userId);
@@ -123,9 +102,7 @@ namespace CompanyUsersAPI.Controllers
         [HttpPut("EditUserJobInfo")]
         public IActionResult EditUserJobInfo(UserJobInfo userJobInfo)
         {
-            UserJobInfo? userDb = _entityFramework.UserJobInfo
-            .Where(u => u.UserId == userJobInfo.UserId)
-            .FirstOrDefault();
+            UserJobInfo? userDb = _userRepository.GetSingleUserJobInfo(userJobInfo.UserId);
             if (userDb != null)
             {
                 userDb.JobTitle = userJobInfo.JobTitle;
@@ -157,9 +134,7 @@ namespace CompanyUsersAPI.Controllers
         [HttpDelete("DeleteUserJobInfo/{userId}")]
         public IActionResult DeleteUserJobInfo(int userId)
         {
-            UserJobInfo? userJobInfo = _entityFramework.UserJobInfo
-            .Where(u => u.UserId == userId)
-            .FirstOrDefault();
+            UserJobInfo? userJobInfo = _userRepository.GetSingleUserJobInfo(userId);
 
             if (userJobInfo != null)
             {
@@ -180,9 +155,7 @@ namespace CompanyUsersAPI.Controllers
         [HttpGet("GetUserSalary/{userId}")]
         public UserSalary GetUserSalary(int userId)
         {
-            UserSalary? userSalary = _entityFramework.UserSalary
-            .Where(u => u.UserId == userId)
-            .FirstOrDefault();
+            UserSalary? userSalary = _userRepository.GetSingleUserSalary(userId);
 
             if (userSalary != null) return userSalary;
             throw new Exception("Failed to get User Salary " + userId);
@@ -191,9 +164,7 @@ namespace CompanyUsersAPI.Controllers
         [HttpPut("EditUserSalary")]
         public IActionResult EditUserSalary(UserSalary userSalary)
         {
-            UserSalary? userDb = _entityFramework.UserSalary
-            .Where(u => u.UserId == userSalary.UserId)
-            .FirstOrDefault();
+            UserSalary? userDb = _userRepository.GetSingleUserSalary(userSalary.UserId);
             if (userDb != null)
             {
                 userDb.Salary = userSalary.Salary;
@@ -224,9 +195,7 @@ namespace CompanyUsersAPI.Controllers
         [HttpDelete("DeleteUserSalary/{userId}")]
         public IActionResult DeleteUserSalary(int userId)
         {
-            UserSalary? userSalary = _entityFramework.UserSalary
-            .Where(u => u.UserId == userId)
-            .FirstOrDefault();
+            UserSalary? userSalary = _userRepository.GetSingleUserSalary(userId);
 
             if (userSalary != null)
             {
