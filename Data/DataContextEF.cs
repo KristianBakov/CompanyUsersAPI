@@ -12,8 +12,8 @@ namespace CompanyUsersAPI.Data
         }
 
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<User> UserSalary { get; set; }
-        public virtual DbSet<User> UserJobInfo { get; set; }
+        public virtual DbSet<UserSalary> UserSalary { get; set; }
+        public virtual DbSet<UserJobInfo> UserJobInfo { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

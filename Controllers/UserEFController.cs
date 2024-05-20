@@ -105,5 +105,139 @@ namespace CompanyUsersAPI.Controllers
 
             throw new Exception("Failed to get " + userId);
         }
+
+        /* User Job Info */
+        [HttpGet("GetUserJobInfo/{userId}")]
+        public UserJobInfo GetUserJobInfo(int userId)
+        {
+            UserJobInfo? userJobInfo = _entityFramework.UserJobInfo
+            .Where(u => u.UserId == userId)
+            .FirstOrDefault();
+
+            if (userJobInfo != null) return userJobInfo;
+            throw new Exception("Failed to get User Job Info " + userId);
+        }
+
+        [HttpPut("EditUserJobInfo")]
+        public IActionResult EditUserJobInfo(UserJobInfo userJobInfo)
+        {
+            UserJobInfo? userDb = _entityFramework.UserJobInfo
+            .Where(u => u.UserId == userJobInfo.UserId)
+            .FirstOrDefault();
+            if (userDb != null)
+            {
+                userDb.JobTitle = userJobInfo.JobTitle;
+                userDb.Department = userJobInfo.Department;
+
+                if (_entityFramework.SaveChanges() > 0)
+                {
+                    return Ok();
+                }
+
+                throw new Exception("Failed to update user " + userJobInfo.UserId);
+            }
+
+            throw new Exception("Failed to get " + userJobInfo.UserId);
+        }
+
+        [HttpPost("AddUserJobInfo")]
+        public IActionResult AddUserJobInfo(UserJobInfo userJobInfo)
+        {
+            _entityFramework.UserJobInfo.Add(userJobInfo);
+            if (_entityFramework.SaveChanges() > 0)
+            {
+                return Ok();
+            }
+
+            throw new Exception("Failed to add user job info for user " + userJobInfo.UserId);
+        }
+
+        [HttpDelete("DeleteUserJobInfo/{userId}")]
+        public IActionResult DeleteUserJobInfo(int userId)
+        {
+            UserJobInfo? userJobInfo = _entityFramework.UserJobInfo
+            .Where(u => u.UserId == userId)
+            .FirstOrDefault();
+
+            if (userJobInfo != null)
+            {
+                _entityFramework.UserJobInfo.Remove(userJobInfo);
+                if (_entityFramework.SaveChanges() > 0)
+                {
+                    return Ok();
+                }
+
+                throw new Exception("Failed to delete User Job Info");
+            }
+
+            throw new Exception("Failed to get " + userId);
+        }
+
+        /* User Salary */
+
+        [HttpGet("GetUserSalary/{userId}")]
+        public UserSalary GetUserSalary(int userId)
+        {
+            UserSalary? userSalary = _entityFramework.UserSalary
+            .Where(u => u.UserId == userId)
+            .FirstOrDefault();
+
+            if (userSalary != null) return userSalary;
+            throw new Exception("Failed to get User Salary " + userId);
+        }
+
+        [HttpPut("EditUserSalary")]
+        public IActionResult EditUserSalary(UserSalary userSalary)
+        {
+            UserSalary? userDb = _entityFramework.UserSalary
+            .Where(u => u.UserId == userSalary.UserId)
+            .FirstOrDefault();
+            if (userDb != null)
+            {
+                userDb.Salary = userSalary.Salary;
+
+                if (_entityFramework.SaveChanges() > 0)
+                {
+                    return Ok();
+                }
+
+                throw new Exception("Failed to update user salary for user " + userSalary.UserId);
+            }
+
+            throw new Exception("Failed to get " + userSalary.UserId);
+        }
+
+        [HttpPost("AddUserSalary")]
+        public IActionResult AddUserSalary(UserSalary userSalary)
+        {
+            _entityFramework.UserSalary.Add(userSalary);
+            if (_entityFramework.SaveChanges() > 0)
+            {
+                return Ok();
+            }
+
+            throw new Exception("Failed to add user salary for user " + userSalary.UserId);
+        }
+
+        [HttpDelete("DeleteUserSalary/{userId}")]
+        public IActionResult DeleteUserSalary(int userId)
+        {
+            UserSalary? userSalary = _entityFramework.UserSalary
+            .Where(u => u.UserId == userId)
+            .FirstOrDefault();
+
+            if (userSalary != null)
+            {
+                _entityFramework.UserSalary.Remove(userSalary);
+                if (_entityFramework.SaveChanges() > 0)
+                {
+                    return Ok();
+                }
+
+                throw new Exception("Failed to delete User Salary");
+            }
+
+            throw new Exception("Failed to get " + userId);
+        }
     }
 }
