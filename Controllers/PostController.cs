@@ -76,6 +76,21 @@ public class PostController : ControllerBase
         return _dapper.LoadData<Post>(sql);
     }
 
+    [HttpGet("PostsBySearch/{searchParam}")]
+    public IEnumerable<Post> PostsBySearch(string searchParam)
+    {
+        string sql = @"SELECT [PostId],
+                    [UserId],
+                    [PostTitle],
+                    [PostContent],
+                    [PostCreated],
+                    [PostUpdated] 
+                    FROM TutorialAppSchema.Posts
+                    WHERE PostTitle LIKE '%" + searchParam + "%' OR PostContent LIKE '%" + searchParam + "%'";
+
+        return _dapper.LoadData<Post>(sql);
+    }
+
     [HttpPost("Post")]
     public IActionResult AddPost(PostToAddDto postToAdd)
     {
