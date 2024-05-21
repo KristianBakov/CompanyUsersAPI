@@ -85,7 +85,8 @@ namespace CompanyUsersAPI.Controllers
                             "', '" + user.Gender +
                             "', '" + user.Active +
                             "')";
-            Console.WriteLine(sql);
+
+
             if (_dapper.ExecuteSql(sql))
             {
                 return Ok();
