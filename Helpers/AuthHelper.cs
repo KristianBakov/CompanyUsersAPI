@@ -89,8 +89,10 @@ public class AuthHelper
 
         List<SqlParameter> sqlParameters = new List<SqlParameter>();
 
-        SqlParameter emailParameter = new SqlParameter("@EmailParam", SqlDbType.VarChar);
-        emailParameter.Value = userForSetPassword.Email;
+        SqlParameter emailParameter = new SqlParameter("@EmailParam", SqlDbType.VarChar)
+        {
+            Value = userForSetPassword.Email
+        };
         sqlParameters.Add(emailParameter);
 
         SqlParameter passwordHashParameter = new SqlParameter("@PasswordHashParam", SqlDbType.VarBinary);

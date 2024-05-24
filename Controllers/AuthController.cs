@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using CompanyUsersAPI.Data;
 using CompanyUsersAPI.Dtos;
 using CompanyUsersAPI.Helpers;
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -81,13 +82,17 @@ namespace CompanyUsersAPI.Controllers
         [HttpPost("Login")]
         public IActionResult Login(UserForLoginDto userForLogin)
         {
-            string sqlForHashAndSalt = @"SELECT
-                            [PasswordHash],
-                            [PasswordSalt] FROM TutorialAppSchema.Auth WHERE Email = '" +
-                            userForLogin.Email + "'";
+            string sqlForHashAndSalt = "EXEC TutorialAppSchema.spLoginConfirmation_Get @Email = @EmailParam";
+
+
+            DynamicParameters sqlParameters = new();
+            // SqlParameter emailParameter = new SqlParameter("@EmailParam", SqlDbType.VarChar);
+            // emailParameter.Value = userForLogin.Email;
+            // sqlParameters.Add(emailParameter);
+            sqlParameters.Add("@EmailParam", userForLogin.Email, DbType.String);
 
             UserForLoginConfirmationDto userForConfirmation = _dapper
-            .LoadDataSingle<UserForLoginConfirmationDto>(sqlForHashAndSalt);
+            .LoadDataSingleWithParameters<UserForLoginConfirmationDto>(sqlForHashAndSalt, sqlParameters);
 
             byte[] passwordHash = _authHelper.GetPasswordHash(userForLogin.Password, userForConfirmation.PasswordSalt);
 
@@ -104,8 +109,7 @@ namespace CompanyUsersAPI.Controllers
                 }
             }
 
-            string userIdSql = @"
-                            SELECT userId FROM TutorialAppSchema.Users WHERE Email = '" +
+            string userIdSql = @"SELECT userId FROM TutorialAppSchema.Users WHERE Email = '" +
                             userForLogin.Email + "'";
 
             int userId = _dapper.LoadDataSingle<int>(userIdSql);
