@@ -1,13 +1,14 @@
 using System.Data;
+using Dapper;
 using CompanyUsersAPI.Data;
-using CompanyUsersAPI.Dtos;
 using CompanyUsersAPI.Helpers;
 using CompanyUsersAPI.Models;
-using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanyUsersAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
