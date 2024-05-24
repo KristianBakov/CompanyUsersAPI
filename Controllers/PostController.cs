@@ -1,6 +1,5 @@
 using System.Data;
 using CompanyUsersAPI.Data;
-using CompanyUsersAPI.Dtos;
 using CompanyUsersAPI.Models;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;

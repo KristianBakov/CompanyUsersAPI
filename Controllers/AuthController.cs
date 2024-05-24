@@ -1,12 +1,12 @@
 using System.Data;
-using System.Security.Cryptography;
+using AutoMapper;
 using CompanyUsersAPI.Data;
 using CompanyUsersAPI.Dtos;
 using CompanyUsersAPI.Helpers;
+using CompanyUsersAPI.Models;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
 namespace CompanyUsersAPI.Controllers
 {
@@ -17,10 +17,17 @@ namespace CompanyUsersAPI.Controllers
     {
         private readonly DataContextDapper _dapper;
         private readonly AuthHelper _authHelper;
+        private readonly ReusableSql _reusableSql;
+        private readonly IMapper _mapper;
         public AuthController(IConfiguration config)
         {
             _dapper = new DataContextDapper(config);
             _authHelper = new AuthHelper(config);
+            _reusableSql = new ReusableSql(config);
+            _mapper = new Mapper(new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<UserForRegistrationDto, User>();
+            }));
         }
 
         [AllowAnonymous]
@@ -43,18 +50,10 @@ namespace CompanyUsersAPI.Controllers
 
                     if (_authHelper.SetPassword(userForSetPassword))
                     {
+                        User user = _mapper.Map<User>(userForRegistration);
+                        user.Active = true;
 
-                        string sqlAddUser = @"EXEC TutorialAppSchema.spUser_Upsert
-                            @FirstName = '" + userForRegistration.FirstName +
-                            "', @LastName = '" + userForRegistration.LastName +
-                            "', @Email = '" + userForRegistration.Email +
-                            "', @Gender = '" + userForRegistration.Gender +
-                            "', @Active = 1" +
-                            ", @JobTitle = '" + userForRegistration.JobTitle +
-                            "', @Department = '" + userForRegistration.Department +
-                            "', @Salary = '" + userForRegistration.Salary + "'";
-
-                        if (_dapper.ExecuteSql(sqlAddUser))
+                        if (_reusableSql.UpsertUser(user))
                         {
                             return Ok();
                         }
