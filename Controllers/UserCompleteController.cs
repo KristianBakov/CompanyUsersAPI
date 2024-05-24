@@ -16,7 +16,7 @@ namespace CompanyUsersAPI.Controllers
         }
 
         [HttpGet("GetUsers/{userId}/{isActive}")]
-        public IEnumerable<UserComplete> GetUsers(int userId, bool isActive)
+        public IEnumerable<User> GetUsers(int userId, bool isActive)
         {
             string sql = @"EXEC TutorialAppSchema.spUsers_Get";
             string parameters = "";
@@ -32,12 +32,12 @@ namespace CompanyUsersAPI.Controllers
 
             sql += parameters.Substring(1);
 
-            IEnumerable<UserComplete> users = _dapper.LoadData<UserComplete>(sql);
+            IEnumerable<User> users = _dapper.LoadData<User>(sql);
             return users;
         }
 
         [HttpPut("UpsertUser")]
-        public IActionResult Upsert(UserComplete user)
+        public IActionResult Upsert(User user)
         {
             string sql = @"EXEC TutorialAppSchema.spUser_Upsert
                         @FirstName = '" + user.FirstName +
